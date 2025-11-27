@@ -17,3 +17,11 @@ runtime/*
 *.stTheme.cache
 *.sublime-workspace
 *.sublime-project
+
+# Secrets and credentials (do not commit)
+.env
+credentials.json
+credentials/
+credentials/*.json
+credentials/web.json
+app/config/twilio.php
