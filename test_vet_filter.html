@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test Vet Filtering</title>
+</head>
+<body>
+<h2>Test Veterinarian Filtering</h2>
+
+<label>Service:</label>
+<select id="serviceSelect">
+  <option value="">-- Select Service --</option>
+  <option value="1" data-specialization="Small Animal Care">Small Animal Care</option>
+  <option value="10" data-specialization="Grooming & Wellness">Grooming & Wellness</option>
+</select>
+
+<br><br>
+
+<label>Veterinarian:</label>
+<select id="vetSelect" disabled>
+  <option value="">-- Select a service first --</option>
+</select>
+
+<script>
+const serviceSelect = document.getElementById('serviceSelect');
+const vetSelect = document.getElementById('vetSelect');
+
+// Veterinarians data (simulating PHP output)
+const vets = [
+  {id: 1, name: 'Dr. Maria Santos', specialization: 'Small Animal Care'},
+  {id: 9, name: 'Dr. Roberto Cruz', specialization: 'Small Animal Care'},
+  {id: 10, name: 'Dr. Patricia Mendoza', specialization: 'Grooming & Wellness'}
+];
+
+serviceSelect.addEventListener('change', function() {
+  const selectedService = serviceSelect.options[serviceSelect.selectedIndex];
+  const serviceSpecialization = selectedService ? selectedService.dataset.specialization : '';
+  
+  console.log('Selected service specialization:', serviceSpecialization);
+  
+  vetSelect.value = '';
+  
+  if (!serviceSpecialization) {
+    vetSelect.disabled = true;
+    vetSelect.innerHTML = '<option value="">-- Select a service first --</option>';
+    return;
+  }
+  
+  let newOptions = '<option value="">-- Choose veterinarian --</option>';
+  let matchCount = 0;
+  
+  vets.forEach(vet => {
+    console.log('Checking vet:', vet.name, '- Spec:', vet.specialization, '- Match:', vet.specialization === serviceSpecialization);
+    if (vet.specialization === serviceSpecialization) {
+      newOptions += `<option value="${vet.id}">${vet.name} (${vet.specialization})</option>`;
+      matchCount++;
+    }
+  });
+  
+  console.log('Match count:', matchCount);
+  
+  if (matchCount === 0) {
+    vetSelect.innerHTML = '<option value="">-- No veterinarians available for this service --</option>';
+    vetSelect.disabled = true;
+  } else {
+    vetSelect.innerHTML = newOptions;
+    vetSelect.disabled = false;
+  }
+});
+
+serviceSelect.dispatchEvent(new Event('change'));
+</script>
+
+<p style="margin-top: 20px; padding: 10px; background: #f0f0f0;">
+  <strong>Instructions:</strong><br>
+  1. Select "Grooming & Wellness" from the Service dropdown<br>
+  2. You should see "Dr. Patricia Mendoza" in the Veterinarian dropdown<br>
+  3. Open browser console (F12) to see debugging logs
+</p>
+
+</body>
+</html>

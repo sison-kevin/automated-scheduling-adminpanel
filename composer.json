@@ -1,0 +1,8 @@
+{
+    "require": {
+        "php": "^8.0",
+        "google/apiclient": "2.17",
+        "twilio/sdk": "^8.8",
+        "endroid/qr-code": "^4.8"
+    }
+}
