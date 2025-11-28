@@ -118,6 +118,29 @@
       outline: none;
     }
 
+    /* Password wrapper to position the eye icon */
+    .password-wrapper {
+      position: relative;
+      display: block;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--muted-foreground);
+      font-size: 18px;
+      line-height: 1;
+      padding: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .form-input input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(255, 145, 77, 0.1);
@@ -177,7 +200,10 @@
       </div>
       <div class="form-input">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <span class="password-wrapper">
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <button type="button" class="toggle-password" aria-label="Show password" title="Show password">&#128065;</button>
+        </span>
       </div>
       <?php if (config_item('recaptcha_site_key')): ?>
       <div class="form-input">
@@ -192,5 +218,27 @@
 
 
 
+  <script>
+    (function(){
+      var btn = document.querySelector('.toggle-password');
+      if (!btn) return;
+      var input = document.getElementById('password');
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        if (!input) return;
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.setAttribute('aria-label', 'Hide password');
+          btn.title = 'Hide password';
+          btn.innerHTML = '&#128064;';
+        } else {
+          input.type = 'password';
+          btn.setAttribute('aria-label', 'Show password');
+          btn.title = 'Show password';
+          btn.innerHTML = '&#128065;';
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
