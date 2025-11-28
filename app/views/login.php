@@ -153,6 +153,7 @@
     }
 
   </style>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
@@ -175,6 +176,9 @@
       <div class="form-input">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      </div>
+      <div class="form-input">
+        <div class="g-recaptcha" data-sitekey="<?= config_item('recaptcha_site_key') ?>"></div>
       </div>
       <button type="submit" class="login-btn">Login</button>
     </form>

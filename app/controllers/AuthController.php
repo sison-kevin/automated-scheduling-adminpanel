@@ -10,6 +10,26 @@ class AuthController extends Controller {
         $this->call->library('session');
     }
 
+    // Verify reCAPTCHA response with Google
+    private function verifyRecaptcha($response)
+    {
+        $secret = config_item('recaptcha_secret_key');
+        if (empty($secret) || empty($response)) {
+            return false;
+        }
+
+        $remoteip = $_SERVER['REMOTE_ADDR'] ?? '';
+        $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($secret) . '&response=' . urlencode($response) . '&remoteip=' . urlencode($remoteip);
+
+        $verifyResponse = @file_get_contents($verifyUrl);
+        if ($verifyResponse === false) {
+            return false;
+        }
+
+        $result = json_decode($verifyResponse, true);
+        return isset($result['success']) && $result['success'] === true;
+    }
+
     // Show login form
     public function loginForm()
     {
@@ -21,6 +41,13 @@ class AuthController extends Controller {
     {
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
+
+        // Verify reCAPTCHA
+        $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
+        if (!$this->verifyRecaptcha($recaptchaResponse)) {
+            echo "<script>alert('reCAPTCHA verification failed. Please try again.');window.location.href='".site_url('login')."';</script>";
+            return;
+        }
 
         // Fixed credentials
         if ($username === 'admin' && $password === 'admin123') {
@@ -43,6 +70,14 @@ class AuthController extends Controller {
     {
         $email = $this->io->post('email');
         $password = $this->io->post('password');
+
+        // Verify reCAPTCHA for user login (if present)
+        $recaptchaResponse = $this->io->post('g-recaptcha-response') ?? ($_POST['g-recaptcha-response'] ?? '');
+        if (!empty($recaptchaResponse) && !$this->verifyRecaptcha($recaptchaResponse)) {
+            flash('error', 'reCAPTCHA verification failed.');
+            redirect('login');
+            return;
+        }
 
         $user = $this->UserModel->getUserByEmail($email);
 
