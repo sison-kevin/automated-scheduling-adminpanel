@@ -153,7 +153,9 @@
     }
 
   </style>
+  <?php if (config_item('recaptcha_site_key')): ?>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <?php endif; ?>
 </head>
 <body>
 
@@ -177,9 +179,11 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
       </div>
+      <?php if (config_item('recaptcha_site_key')): ?>
       <div class="form-input">
         <div class="g-recaptcha" data-sitekey="<?= config_item('recaptcha_site_key') ?>"></div>
       </div>
+      <?php endif; ?>
       <button type="submit" class="login-btn">Login</button>
     </form>
 
